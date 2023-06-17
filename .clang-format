@@ -1,0 +1,7 @@
+# http://clang-format-configurator.site/
+
+---
+BasedOnStyle: Microsoft
+ColumnLimit: 120
+
+...
