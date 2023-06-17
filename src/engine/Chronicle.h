@@ -18,6 +18,20 @@ class Chronicle
   private:
     static inline Unique<Platform> _platform{};
     static inline Ref<Window> _window{};
+    static inline wgpu::TextureView _depthStencilView;
+    static inline wgpu::RenderPipeline _renderPipeline;
+    static inline wgpu::BindGroup _bindGroup;
+    static inline wgpu::Texture _texture;
+    static inline wgpu::Buffer _indexBuffer;
+    static inline wgpu::Buffer _vertexBuffer;
+    static inline wgpu::Sampler _sampler;
+    static inline wgpu::Queue _queue;
+
+    static void InitBuffers();
+    static void InitTextures();
+
+    static void CreateDepthStencilView();
+    static void CreatePipeline();
 };
 
 } // namespace chronicle

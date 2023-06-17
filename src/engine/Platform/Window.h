@@ -5,6 +5,8 @@
 
 #include "Common/Common.h"
 
+#include <dawn/webgpu_cpp.h>
+
 namespace chronicle
 {
 
@@ -31,6 +33,11 @@ class Window
     virtual ~Window() = default;
 
     virtual void Close() = 0;
+
+    [[nodiscard]] virtual const std::string &GetTitle() const = 0;
+    [[nodiscard]] virtual uint32_t GetWidth() const = 0;
+    [[nodiscard]] virtual uint32_t GetHeight() const = 0;
+    [[nodiscard]] virtual wgpu::SwapChain GetSwapChain() const = 0;
 };
 
 } // namespace chronicle

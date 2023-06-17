@@ -15,7 +15,9 @@ class Platform
     virtual ~Platform() = default;
 
     virtual bool Poll() = 0;
-    [[nodiscard]] virtual double Delta() = 0;
+
+    [[nodiscard]] virtual wgpu::Device GetDevice() const = 0;
+    [[nodiscard]] virtual double GetDelta() const = 0;
 
     [[nodiscard]] virtual Ref<Window> CreateWindow(const WindowDescriptor &descriptor) = 0;
 

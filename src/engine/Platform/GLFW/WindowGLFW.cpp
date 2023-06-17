@@ -11,11 +11,12 @@ namespace chronicle::internal::glfw
 {
 
 WindowGLFW::WindowGLFW(dawn::native::Instance *instance, const wgpu::Device &device, const WindowDescriptor &descriptor)
-    : _instance(instance), _device(device)
+    : _instance(instance), _device(device), _title(descriptor.title), _width(descriptor.width),
+      _height(descriptor.height)
 {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-    _window = glfwCreateWindow(descriptor.width, descriptor.height, descriptor.title.c_str(), nullptr, nullptr);
+    _window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
     if (!_window)
     {
         throw WindowError("Cannot create window");
@@ -31,8 +32,8 @@ WindowGLFW::WindowGLFW(dawn::native::Instance *instance, const wgpu::Device &dev
     WGPUSwapChainDescriptor swapChainDesc = {};
     swapChainDesc.usage = WGPUTextureUsage_RenderAttachment;
     swapChainDesc.format = static_cast<WGPUTextureFormat>(GetPreferredSwapChainTextureFormat());
-    swapChainDesc.width = descriptor.width;
-    swapChainDesc.height = descriptor.height;
+    swapChainDesc.width = _width;
+    swapChainDesc.height = _height;
     swapChainDesc.presentMode = WGPUPresentMode_Mailbox;
     auto backendSwapChain = backendProcs.deviceCreateSwapChain(_device.Get(), surface, &swapChainDesc);
     _swapChain = wgpu::SwapChain::Acquire(backendSwapChain);
@@ -62,6 +63,8 @@ bool WindowGLFW::Poll()
         Close();
         return false;
     }
+
+    _swapChain.Present();
 
     return true;
 }

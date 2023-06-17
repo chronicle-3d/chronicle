@@ -18,7 +18,13 @@ class PlatformGLFW : public Platform
     ~PlatformGLFW() override;
 
     bool Poll() override;
-    [[nodiscard]] double Delta() override
+
+    [[nodiscard]] wgpu::Device GetDevice() const override
+    {
+        return _device;
+    }
+
+    [[nodiscard]] double GetDelta() const override
     {
         return _delta;
     }
