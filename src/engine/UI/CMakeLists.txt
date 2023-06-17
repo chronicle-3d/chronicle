@@ -1,0 +1,11 @@
+target_sources(chronicle-core
+PRIVATE
+    "FontEngineBackend.cpp"
+    "FontEngineBackend.h"
+    "RenderBackend.cpp"
+    "RenderBackend.h"
+    "SystemBackend.cpp"
+    "SystemBackend.h"
+    "UI.cpp"
+    "UI.h"
+)

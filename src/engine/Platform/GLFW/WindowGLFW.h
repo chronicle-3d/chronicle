@@ -51,10 +51,16 @@ class WindowGLFW : public Window
     uint32_t _height{};
 
     GLFWwindow *_window{};
+    wgpu::Surface _surface{};
     wgpu::SwapChain _swapChain{};
 
     void CloseInternal();
-    wgpu::TextureFormat GetPreferredSwapChainTextureFormat();
+    void CreateSurface();
+    void CreateSwapChain();
+
+    wgpu::TextureFormat GetPreferredSwapChainTextureFormat() const;
+
+    static void FramebufferSizeCallback(GLFWwindow *window, int width, int height);
 };
 
 } // namespace chronicle::internal::glfw

@@ -22,21 +22,11 @@ WindowGLFW::WindowGLFW(dawn::native::Instance *instance, const wgpu::Device &dev
         throw WindowError("Cannot create window");
     }
 
-    // Create the swapchain
-    const auto &backendProcs = dawn::native::GetProcs();
-    auto surfaceChainedDesc = wgpu::glfw::SetupWindowAndGetSurfaceDescriptor(_window);
-    WGPUSurfaceDescriptor surfaceDesc;
-    surfaceDesc.nextInChain = reinterpret_cast<WGPUChainedStruct *>(surfaceChainedDesc.get());
-    WGPUSurface surface = backendProcs.instanceCreateSurface(instance->Get(), &surfaceDesc);
+    glfwSetWindowUserPointer(_window, this);
+    glfwSetFramebufferSizeCallback(_window, FramebufferSizeCallback);
 
-    WGPUSwapChainDescriptor swapChainDesc = {};
-    swapChainDesc.usage = WGPUTextureUsage_RenderAttachment;
-    swapChainDesc.format = static_cast<WGPUTextureFormat>(GetPreferredSwapChainTextureFormat());
-    swapChainDesc.width = _width;
-    swapChainDesc.height = _height;
-    swapChainDesc.presentMode = WGPUPresentMode_Mailbox;
-    auto backendSwapChain = backendProcs.deviceCreateSwapChain(_device.Get(), surface, &swapChainDesc);
-    _swapChain = wgpu::SwapChain::Acquire(backendSwapChain);
+    CreateSurface();
+    CreateSwapChain();
 
     ContextGLFW::windows.insert(this);
 }
@@ -78,10 +68,43 @@ void WindowGLFW::CloseInternal()
     }
 }
 
-wgpu::TextureFormat WindowGLFW::GetPreferredSwapChainTextureFormat()
+void WindowGLFW::CreateSurface()
+{
+    const auto &backendProcs = dawn::native::GetProcs();
+    auto surfaceChainedDesc = wgpu::glfw::SetupWindowAndGetSurfaceDescriptor(_window);
+
+    WGPUSurfaceDescriptor surfaceDesc{};
+    surfaceDesc.nextInChain = std::bit_cast<WGPUChainedStruct *>(surfaceChainedDesc.get());
+    _surface = wgpu::Surface::Acquire(backendProcs.instanceCreateSurface(_instance->Get(), &surfaceDesc));
+}
+
+void WindowGLFW::CreateSwapChain()
+{
+    const auto &backendProcs = dawn::native::GetProcs();
+
+    WGPUSwapChainDescriptor swapChainDesc{};
+    swapChainDesc.usage = WGPUTextureUsage_RenderAttachment;
+    swapChainDesc.format = static_cast<WGPUTextureFormat>(GetPreferredSwapChainTextureFormat());
+    swapChainDesc.width = _width;
+    swapChainDesc.height = _height;
+    swapChainDesc.presentMode = WGPUPresentMode_Force32;
+
+    auto backendSwapChain = backendProcs.deviceCreateSwapChain(_device.Get(), _surface.Get(), &swapChainDesc);
+    _swapChain = wgpu::SwapChain::Acquire(backendSwapChain);
+}
+
+wgpu::TextureFormat WindowGLFW::GetPreferredSwapChainTextureFormat() const
 {
     // TODO(dawn:1362): Return the adapter's preferred format when implemented.
     return wgpu::TextureFormat::BGRA8Unorm;
+}
+
+void WindowGLFW::FramebufferSizeCallback(GLFWwindow *window, int width, int height)
+{
+    auto *windowGLFW = static_cast<WindowGLFW *>(glfwGetWindowUserPointer(window));
+    windowGLFW->_width = width;
+    windowGLFW->_height = height;
+    windowGLFW->CreateSwapChain();
 }
 
 } // namespace chronicle::internal::glfw

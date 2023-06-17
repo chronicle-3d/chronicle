@@ -13,10 +13,11 @@ class Chronicle
 {
   public:
     static void Init();
+    static void Deinit();
     static void Run();
 
   private:
-    static inline Unique<Platform> _platform{};
+    //static inline Unique<Platform> _platform{};
     static inline Ref<Window> _window{};
     static inline wgpu::TextureView _depthStencilView;
     static inline wgpu::RenderPipeline _renderPipeline;

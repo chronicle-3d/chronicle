@@ -3,6 +3,8 @@
 
 #include "Chronicle.h"
 
+#include "UI/UI.h"
+
 #include <dawn/utils/ComboRenderPipelineDescriptor.h>
 #include <dawn/utils/WGPUHelpers.h>
 
@@ -11,9 +13,11 @@ namespace chronicle
 
 void Chronicle::Init()
 {
-    _platform = Platform::Create();
-    _window = _platform->CreateWindow({});
-    _queue = _platform->GetDevice().GetQueue();
+    Platform::Init();
+    _window = Platform::CreateWindow({});
+    _queue = Platform::GetDevice().GetQueue();
+
+    UI::Init();
 
     InitBuffers();
     InitTextures();
@@ -21,14 +25,32 @@ void Chronicle::Init()
     CreatePipeline();
 }
 
+void Chronicle::Deinit()
+{
+    UI::Deinit();
+    Platform::Deinit();
+}
+
 void Chronicle::Run()
 {
-    auto device = _platform->GetDevice();
+    auto device = Platform::GetDevice();
+
+    // uint32_t width = _window->GetSwapChain().GetCurrentTexture().GetWidth();
+    // uint32_t height = _window->GetSwapChain().GetCurrentTexture().GetHeight();
+
     auto swapChain = _window->GetSwapChain();
 
-    while (_platform->Poll())
+    while (Platform::Poll())
     {
+        if (swapChain.Get() != _window->GetSwapChain().Get())
+        {
+            swapChain = _window->GetSwapChain();
+            CreateDepthStencilView();
+            CreatePipeline();
+        }
+
         wgpu::TextureView backbufferView = swapChain.GetCurrentTextureView();
+
         dawn::utils::ComboRenderPassDescriptor renderPass({backbufferView}, _depthStencilView);
 
         wgpu::CommandEncoder encoder = device.CreateCommandEncoder();
@@ -49,7 +71,7 @@ void Chronicle::Run()
 
 void Chronicle::InitBuffers()
 {
-    auto device = _platform->GetDevice();
+    auto device = Platform::GetDevice();
 
     static const uint32_t indexData[3] = {
         0,
@@ -67,7 +89,7 @@ void Chronicle::InitBuffers()
 
 void Chronicle::InitTextures()
 {
-    auto device = _platform->GetDevice();
+    auto device = Platform::GetDevice();
 
     wgpu::TextureDescriptor descriptor;
     descriptor.dimension = wgpu::TextureDimension::e2D;
@@ -106,20 +128,20 @@ void Chronicle::CreateDepthStencilView()
 {
     wgpu::TextureDescriptor descriptor{};
     descriptor.dimension = wgpu::TextureDimension::e2D;
-    descriptor.size.width = _window->GetWidth();
-    descriptor.size.height = _window->GetHeight();
+    descriptor.size.width = _window->GetSwapChain().GetCurrentTexture().GetWidth();
+    descriptor.size.height = _window->GetSwapChain().GetCurrentTexture().GetHeight();
     descriptor.size.depthOrArrayLayers = 1;
     descriptor.sampleCount = 1;
     descriptor.format = wgpu::TextureFormat::Depth24PlusStencil8;
     descriptor.mipLevelCount = 1;
     descriptor.usage = wgpu::TextureUsage::RenderAttachment;
-    auto depthStencilTexture = _platform->GetDevice().CreateTexture(&descriptor);
+    auto depthStencilTexture = Platform::GetDevice().CreateTexture(&descriptor);
     _depthStencilView = depthStencilTexture.CreateView();
 }
 
 void Chronicle::CreatePipeline()
 {
-    auto device = _platform->GetDevice();
+    auto device = Platform::GetDevice();
 
     wgpu::ShaderModule vsModule = dawn::utils::CreateShaderModule(device, R"(
         @vertex fn main(@location(0) pos : vec4f)
@@ -133,7 +155,8 @@ void Chronicle::CreatePipeline()
 
         @fragment fn main(@builtin(position) FragCoord : vec4f)
                               -> @location(0) vec4f {
-            return textureSample(myTexture, mySampler, FragCoord.xy / vec2f(640.0, 480.0));
+            return vec4(1.0, 0.0, 0.0, 1.0f);
+            //return textureSample(myTexture, mySampler, FragCoord.xy / vec2f(640.0, 480.0));
         })");
 
     auto bgl = dawn::utils::MakeBindGroupLayout(
@@ -158,6 +181,7 @@ void Chronicle::CreatePipeline()
     _renderPipeline = device.CreateRenderPipeline(&descriptor);
 
     wgpu::TextureView view = _texture.CreateView();
+    auto width = _texture.GetWidth();
 
     _bindGroup = dawn::utils::MakeBindGroup(device, bgl, {{0, _sampler}, {1, view}});
 }

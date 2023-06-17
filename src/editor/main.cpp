@@ -16,6 +16,7 @@ int main(int argc, char **argv)
 
     chronicle::Chronicle::Init();
     chronicle::Chronicle::Run();
+    chronicle::Chronicle::Deinit();
 
     return EXIT_SUCCESS;
 }

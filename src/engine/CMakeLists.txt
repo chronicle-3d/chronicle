@@ -32,6 +32,7 @@ add_library(chronicle-core "")
 #add_subdirectory(Loaders)
 add_subdirectory(Common)
 add_subdirectory(Platform)
+add_subdirectory(UI)
 #add_subdirectory(Renderer)
 #add_subdirectory(Storage)
 #add_subdirectory(Utils)
@@ -129,4 +130,5 @@ target_link_libraries(chronicle-core
 #        Tracy::TracyClient
         magic_enum::magic_enum
 #        efsw
+        RmlUi::Core
 )

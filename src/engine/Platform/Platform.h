@@ -12,16 +12,27 @@ namespace chronicle
 class Platform
 {
   public:
-    virtual ~Platform() = default;
+    static void Init();
+    static void Deinit();
+    static bool Poll();
 
-    virtual bool Poll() = 0;
+    [[nodiscard]] static wgpu::Device GetDevice();
 
-    [[nodiscard]] virtual wgpu::Device GetDevice() const = 0;
-    [[nodiscard]] virtual double GetDelta() const = 0;
+    [[nodiscard]] static double GetDeltaTime()
+    {
+        return _deltaTime;
+    }
 
-    [[nodiscard]] virtual Ref<Window> CreateWindow(const WindowDescriptor &descriptor) = 0;
+    [[nodiscard]] static double GetElapsedTime()
+    {
+        return _elapsedTime;
+    }
 
-    static Unique<Platform> Create();
+    [[nodiscard]] static Ref<Window> CreateWindow(const WindowDescriptor &descriptor);
+
+  private:
+    static inline double _deltaTime{};
+    static inline double _elapsedTime{};
 };
 
 } // namespace chronicle

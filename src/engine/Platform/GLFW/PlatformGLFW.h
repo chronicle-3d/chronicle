@@ -11,31 +11,24 @@
 namespace chronicle::internal::glfw
 {
 
-class PlatformGLFW : public Platform
+class PlatformGLFW
 {
   public:
     explicit PlatformGLFW();
-    ~PlatformGLFW() override;
+    ~PlatformGLFW();
 
-    bool Poll() override;
+    bool Poll();
 
-    [[nodiscard]] wgpu::Device GetDevice() const override
+    [[nodiscard]] wgpu::Device GetDevice() const
     {
         return _device;
     }
 
-    [[nodiscard]] double GetDelta() const override
-    {
-        return _delta;
-    }
-
-    [[nodiscard]] Ref<Window> CreateWindow(const WindowDescriptor &descriptor) override;
+    [[nodiscard]] Ref<Window> CreateWindow(const WindowDescriptor &descriptor);
 
   private:
     Unique<dawn::native::Instance> _instance{};
     wgpu::Device _device{};
-
-    double _delta{};
 };
 
 } // namespace chronicle::internal::glfw

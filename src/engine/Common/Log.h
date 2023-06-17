@@ -13,10 +13,6 @@ constexpr void log(spdlog::source_loc source, spdlog::level::level_enum lvl, spd
                    Args &&...args)
 {
     spdlog::log(source, lvl, fmt, std::forward<Args>(args)...);
-#ifdef TRACY_ENABLE
-    std::string message = fmt::format(fmt, std::forward<Args>(args)...);
-    tracy::Profiler::MessageColor(message.c_str(), message.size(), colorFromErrorLevel(lvl), 0);
-#endif
 }
 
 } // namespace chronicle

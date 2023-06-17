@@ -127,11 +127,6 @@ bool PlatformGLFW::Poll()
 
     glfwPollEvents();
 
-    static double lastTime = 0;
-    auto time = glfwGetTime();
-    _delta = time - lastTime;
-    lastTime = time;
-
     return true;
 }
 
