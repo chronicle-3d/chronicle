@@ -10,12 +10,14 @@ namespace chronicle
 
 void UI::Init()
 {
-    _rendererBackend = std::make_unique<RenderBackend>();
-    _systemBackend = std::make_unique<SystemBackend>();
+    _rendererBackend = MakeUnique<RenderBackend>();
+    _systemBackend = MakeUnique<SystemBackend>();
+    _fileBackend = MakeUnique<FileBackend>();
 
     // Install the custom interfaces constructed by the backend before initializing RmlUi.
     Rml::SetSystemInterface(_systemBackend.get());
     Rml::SetRenderInterface(_rendererBackend.get());
+    Rml::SetFileInterface(_fileBackend.get());
 
     // RmlUi initialisation.
     Rml::Initialise();

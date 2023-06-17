@@ -28,7 +28,7 @@ class Platform
         return _elapsedTime;
     }
 
-    [[nodiscard]] static Ref<Window> CreateWindow(const WindowDescriptor &descriptor);
+    [[nodiscard]] static SharedPtr<Window> CreateWindow(const WindowDescriptor &descriptor);
 
   private:
     static inline double _deltaTime{};

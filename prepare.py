@@ -3,9 +3,15 @@
 import distutils.spawn
 import os
 import shutil
+import urllib.request
+import zipfile
+import tempfile
 
 DAWN_DIR = "vendor/dawn"
 DEPOT_TOOLS_DIR = "vendor/depot_tools"
+RMLUI_DIR = "vendor/rmlui"
+FREETYPE_URL = "https://github.com/ubawurinna/freetype-windows-binaries/archive/refs/tags/v2.12.1.zip"
+FREETYPE_STRIP_DIR = "freetype-windows-binaries-2.12.1"
 
 OUT_DIR = "out/dawn"
 
@@ -44,19 +50,28 @@ os.chdir(DAWN_DIR)
 shutil.copyfile("scripts/standalone.gclient", ".gclient")
 runExecutable("gclient sync")
 
-# workaround for chrome version. How to handle this?
-#createDirectory("chrome")
-#if not os.path.exists("chrome/VERSION"):
-#        with open("chrome/VERSION", 'w') as f:
-#            f.write('\n\n\nPATCH=0\n')
+os.chdir(workingPath)
 
-#createDirectory("{0}/{1}/debug".format(workingPath, OUT_DIR))
-#createDirectory("{0}/{1}/release".format(workingPath, OUT_DIR))
-#shutil.copyfile("{0}/dawn-win32-debug.gn".format(workingPath), "{0}/{1}/debug/args.gn".format(workingPath, OUT_DIR))
-#shutil.copyfile("{0}/dawn-win32-release.gn".format(workingPath), "{0}/{1}/debug/release.gn".format(workingPath, OUT_DIR))
+#### PREPARE RMLUI ####
 
-#runExecutable("python build/util/lastchange.py -o build/util/LASTCHANGE")
-#runExecutable("gn gen {0}/{1}/debug".format(workingPath, OUT_DIR))
-#runExecutable("ninja -C {0}/{1}/debug native tint".format(workingPath, OUT_DIR))
-#runExecutable("gn gen {0}/{1}/release".format(workingPath, OUT_DIR))
-#runExecutable("ninja -C {0}/{1}/release native tint".format(workingPath, OUT_DIR))
+createDirectory("{0}/Dependencies/freetype".format(RMLUI_DIR))
+with urllib.request.urlopen(FREETYPE_URL) as sourceFile:
+    with tempfile.TemporaryFile() as destFile:
+        destFile.write(sourceFile.read())
+        with zipfile.ZipFile(destFile) as freeTypeZip:
+            for info in freeTypeZip.infolist():
+                destinationName = os.path.relpath(info.filename, FREETYPE_STRIP_DIR)
+                if destinationName == ".":
+                    continue
+
+                destinationName = "{0}/Dependencies/freetype/{1}".format(RMLUI_DIR, destinationName)
+
+                if info.is_dir():
+                    createDirectory(destinationName)
+                else:
+                    with open(destinationName, 'wb') as outputFile:
+                        outputFile.write(freeTypeZip.read(info.filename))
+createDirectory("{0}/Dependencies/lib".format(RMLUI_DIR))
+createDirectory("{0}/Dependencies/include".format(RMLUI_DIR))
+shutil.copytree("{0}/Dependencies/freetype/release dll/win64/".format(RMLUI_DIR), "{0}/Dependencies/lib/".format(RMLUI_DIR), dirs_exist_ok=True) 
+shutil.copytree("{0}/Dependencies/freetype/include/".format(RMLUI_DIR), "{0}/Dependencies/include/".format(RMLUI_DIR), dirs_exist_ok=True) 

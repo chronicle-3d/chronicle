@@ -66,7 +66,7 @@ void DeviceLogCallback(WGPULoggingType type, const char *message, void *)
 
 PlatformGLFW::PlatformGLFW()
 {
-    _instance = std::make_unique<dawn::native::Instance>();
+    _instance = MakeUnique<dawn::native::Instance>();
     _instance->DiscoverDefaultPhysicalDevices();
 
     // Get an adapter for the backend to use, and create the device.
@@ -130,9 +130,9 @@ bool PlatformGLFW::Poll()
     return true;
 }
 
-Ref<Window> PlatformGLFW::CreateWindow(const WindowDescriptor &descriptor)
+SharedPtr<Window> PlatformGLFW::CreateWindow(const WindowDescriptor &descriptor)
 {
-    return std::make_shared<WindowGLFW>(_instance.get(), _device, descriptor);
+    return MakeShared<WindowGLFW>(_instance.get(), _device, descriptor);
 }
 
 } // namespace chronicle::internal::glfw

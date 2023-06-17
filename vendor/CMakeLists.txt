@@ -12,6 +12,12 @@ add_subdirectory(dawn EXCLUDE_FROM_ALL)
 # Add Magic Enum
 add_subdirectory(magic_enum EXCLUDE_FROM_ALL)
 
+# Add HarfBuzz
+#add_subdirectory(harfbuzz EXCLUDE_FROM_ALL)
+
+# Add FreeType
+#add_subdirectory(freetype EXCLUDE_FROM_ALL)
+
 # Add RmlUi
-set(NO_FONT_INTERFACE_DEFAULT ON CACHE INTERNAL "" FORCE)
+#set(NO_FONT_INTERFACE_DEFAULT ON CACHE INTERNAL "" FORCE)
 add_subdirectory(rmlui EXCLUDE_FROM_ALL)

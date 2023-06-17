@@ -18,7 +18,7 @@ class Chronicle
 
   private:
     //static inline Unique<Platform> _platform{};
-    static inline Ref<Window> _window{};
+    static inline SharedPtr<Window> _window{};
     static inline wgpu::TextureView _depthStencilView;
     static inline wgpu::RenderPipeline _renderPipeline;
     static inline wgpu::BindGroup _bindGroup;

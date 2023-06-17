@@ -18,7 +18,18 @@
 namespace chronicle
 {
 
-template <class T> using Unique = std::unique_ptr<T>;
-template <class T> using Ref = std::shared_ptr<T>;
+template <typename T> using UniquePtr = std::unique_ptr<T>;
+template <typename T> class Releaser;
+template <typename T> using UniqueReleaserPtr = std::unique_ptr<T, Releaser<T>>;
+template <typename T> using SharedPtr = std::shared_ptr<T>;
+template <typename T> using WeakPtr = std::weak_ptr<T>;
+template <typename T, typename... Args> inline SharedPtr<T> MakeShared(Args &&...args)
+{
+    return std::make_shared<T, Args...>(std::forward<Args>(args)...);
+}
+template <typename T, typename... Args> inline UniquePtr<T> MakeUnique(Args &&...args)
+{
+    return std::make_unique<T, Args...>(std::forward<Args>(args)...);
+}
 
 } // namespace chronicle

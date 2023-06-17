@@ -12,14 +12,14 @@ namespace chronicle
 
 struct PlatformContext
 {
-    static inline Unique<internal::glfw::PlatformGLFW> platform{};
+    static inline UniquePtr<internal::glfw::PlatformGLFW> platform{};
     static inline std::chrono::steady_clock::time_point initTime{};
     static inline std::chrono::steady_clock::time_point lastFrameTime{};
 };
 
 void Platform::Init()
 {
-    PlatformContext::platform = std::make_unique<internal::glfw::PlatformGLFW>();
+    PlatformContext::platform = MakeUnique<internal::glfw::PlatformGLFW>();
     PlatformContext::initTime = std::chrono::high_resolution_clock::now();
     PlatformContext::lastFrameTime = PlatformContext::initTime;
 }
@@ -44,7 +44,7 @@ wgpu::Device Platform::GetDevice()
     return PlatformContext::platform->GetDevice();
 }
 
-Ref<Window> Platform::CreateWindow(const WindowDescriptor &descriptor)
+SharedPtr<Window> Platform::CreateWindow(const WindowDescriptor &descriptor)
 {
     return PlatformContext::platform->CreateWindow(descriptor);
 }

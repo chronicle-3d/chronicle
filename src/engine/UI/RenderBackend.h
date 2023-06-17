@@ -16,12 +16,12 @@ class RenderBackend : public Rml::RenderInterface
     void RenderGeometry(Rml::Vertex *vertices, int num_vertices, int *indices, int num_indices,
                         Rml::TextureHandle texture, const Rml::Vector2f &translation) override;
 
-    Rml::CompiledGeometryHandle CompileGeometry(Rml::Vertex *vertices, int num_vertices, int *indices, int num_indices,
-                                                Rml::TextureHandle texture) override;
-
-    void RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f &translation) override;
-
-    void ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry) override;
+    //Rml::CompiledGeometryHandle CompileGeometry(Rml::Vertex *vertices, int num_vertices, int *indices, int num_indices,
+    //                                            Rml::TextureHandle texture) override;
+    //
+    //void RenderCompiledGeometry(Rml::CompiledGeometryHandle geometry, const Rml::Vector2f &translation) override;
+    //
+    //void ReleaseCompiledGeometry(Rml::CompiledGeometryHandle geometry) override;
 
     void EnableScissorRegion(bool enable) override;
 
@@ -35,7 +35,7 @@ class RenderBackend : public Rml::RenderInterface
 
     void ReleaseTexture(Rml::TextureHandle texture) override;
 
-    void SetTransform(const Rml::Matrix4f *transform) override;
+    //void SetTransform(const Rml::Matrix4f *transform) override;
 };
 
 } // namespace chronicle

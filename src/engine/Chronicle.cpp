@@ -34,11 +34,18 @@ void Chronicle::Deinit()
 void Chronicle::Run()
 {
     auto device = Platform::GetDevice();
-
-    // uint32_t width = _window->GetSwapChain().GetCurrentTexture().GetWidth();
-    // uint32_t height = _window->GetSwapChain().GetCurrentTexture().GetHeight();
-
     auto swapChain = _window->GetSwapChain();
+
+    // Create a context to display documents within.
+    Rml::Context *context = Rml::CreateContext("main", Rml::Vector2i(_window->GetWidth(), _window->GetHeight()));
+
+    // Tell RmlUi to load the given fonts.
+    Rml::LoadFontFace("LatoLatin-Regular.ttf");
+    // Fonts can be registered as fallback fonts, as in this case to display emojis.
+    Rml::LoadFontFace("NotoEmoji-Regular.ttf", true);
+
+    Rml::ElementDocument *document = context->LoadDocument("demo.rml");
+    document->Show();
 
     while (Platform::Poll())
     {
@@ -48,6 +55,8 @@ void Chronicle::Run()
             CreateDepthStencilView();
             CreatePipeline();
         }
+
+        context->Update();
 
         wgpu::TextureView backbufferView = swapChain.GetCurrentTextureView();
 
@@ -61,6 +70,9 @@ void Chronicle::Run()
             pass.SetVertexBuffer(0, _vertexBuffer);
             pass.SetIndexBuffer(_indexBuffer, wgpu::IndexFormat::Uint32);
             pass.DrawIndexed(3);
+
+            context->Render();
+
             pass.End();
         }
 

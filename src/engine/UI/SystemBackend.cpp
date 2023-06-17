@@ -3,12 +3,14 @@
 
 #include "SystemBackend.h"
 
+#include "Platform/Platform.h"
+
 namespace chronicle
 {
 
 double SystemBackend::GetElapsedTime()
 {
-    return 0.0;
+    return Platform::GetElapsedTime();
 }
 
 bool SystemBackend::LogMessage(Rml::Log::Type type, const Rml::String &message)

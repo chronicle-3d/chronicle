@@ -5,6 +5,7 @@
 
 #include "Common/Common.h"
 
+#include "FileBackend.h"
 #include "RenderBackend.h"
 #include "SystemBackend.h"
 
@@ -18,8 +19,9 @@ class UI
     static void Deinit();
 
   private:
-    static inline Unique<RenderBackend> _rendererBackend{};
-    static inline Unique<SystemBackend> _systemBackend{};
+    static inline UniquePtr<RenderBackend> _rendererBackend{};
+    static inline UniquePtr<SystemBackend> _systemBackend{};
+    static inline UniquePtr<FileBackend> _fileBackend{};
 };
 
 } // namespace chronicle

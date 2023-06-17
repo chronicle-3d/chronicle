@@ -24,10 +24,10 @@ class PlatformGLFW
         return _device;
     }
 
-    [[nodiscard]] Ref<Window> CreateWindow(const WindowDescriptor &descriptor);
+    [[nodiscard]] SharedPtr<Window> CreateWindow(const WindowDescriptor &descriptor);
 
   private:
-    Unique<dawn::native::Instance> _instance{};
+    UniquePtr<dawn::native::Instance> _instance{};
     wgpu::Device _device{};
 };
 

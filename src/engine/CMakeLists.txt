@@ -56,14 +56,14 @@ add_library(chronicle::core ALIAS chronicle-core)
 
 set_property(TARGET chronicle-core PROPERTY CXX_STANDARD 20)
 #
-#target_compile_definitions(chronicle-core
-#    PUBLIC
+target_compile_definitions(chronicle-core
+    PUBLIC
 #        RENDERER=VULKAN
 #        PLATFORM=GLFW
-#        RESOURCES_DEBUG_PATH="${CMAKE_CURRENT_SOURCE_DIR}"
+        ASSETS_DEBUG_PATH="${CMAKE_CURRENT_SOURCE_DIR}/../assets"
 #    PRIVATE
 #        $<$<CONFIG:Debug>:VULKAN_ENABLE_DEBUG_MARKER>
-#)
+)
 #
 ##IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
 ##    message("debug mode")

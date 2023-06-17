@@ -87,7 +87,7 @@ void WindowGLFW::CreateSwapChain()
     swapChainDesc.format = static_cast<WGPUTextureFormat>(GetPreferredSwapChainTextureFormat());
     swapChainDesc.width = _width;
     swapChainDesc.height = _height;
-    swapChainDesc.presentMode = WGPUPresentMode_Force32;
+    swapChainDesc.presentMode = WGPUPresentMode_Mailbox;
 
     auto backendSwapChain = backendProcs.deviceCreateSwapChain(_device.Get(), _surface.Get(), &swapChainDesc);
     _swapChain = wgpu::SwapChain::Acquire(backendSwapChain);
